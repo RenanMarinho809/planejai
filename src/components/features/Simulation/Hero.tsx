@@ -1,6 +1,6 @@
-import PiggyBankImage from '../../assets/piggyBank.svg'
+import PiggyBankImage from '../../../assets/images/piggy-bank.png'
 
-export default function Hero() {
+export default function SimulationHero() {
   return (
      <div className="mb-8 text-center">
       <div className="flex flex-col items-center sm:flex-row">
