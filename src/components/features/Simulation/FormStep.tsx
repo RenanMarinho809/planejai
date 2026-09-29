@@ -1,8 +1,9 @@
 import { ArrowLeft, ArrowRight, type LucideIcon } from 'lucide-react'
 import { type SyntheticEvent, useState } from 'react'
-import Input, { type InputProps } from '../../shared/Input'
-import Button from '../../shared/Button'
+import type { InputProps } from '../../shared/Input'
+import Input from '../../shared/Input'
 import { formatCurrencyMask } from '../../../utils/currency'
+import Button from '../../shared/Button'
 
 
 
@@ -75,9 +76,9 @@ export default function FormStep({
               type="button"
               onClick={onBack}
               variant="ghost"
-              icon={ArrowLeft}
               className="order-2 flex-1 justify-center rounded-xl py-3 sm:order-1"
             >
+              <ArrowLeft size={20} />
               Voltar
             </Button>
           )}
