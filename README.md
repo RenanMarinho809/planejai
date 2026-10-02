@@ -1,75 +1,100 @@
-# React + TypeScript + Vite
+# PlanejAI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O PlanejAI é uma aplicação web de planejamento financeiro pessoal. A pessoa informa sua renda mensal, seus custos fixos, suas dívidas e uma meta financeira. A aplicação calcula quanto sobra mensalmente e apresenta uma análise da meta, com sugestões geradas por inteligência artificial.
 
-Currently, two official plugins are available:
+## Objetivo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O objetivo do PlanejAI é ajudar as pessoas a visualizar se uma meta financeira pode ser alcançada dentro do prazo desejado e a organizar os próximos passos. A experiência foi pensada para ser simples e acessível: o usuário preenche um formulário dividido em etapas e recebe um resumo financeiro acompanhado de orientações em linguagem direta.
 
-## React Compiler
+O diagnóstico é informativo e não substitui aconselhamento financeiro profissional.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Como funciona
 
-## Expanding the ESLint configuration
+1. O usuário preenche seis etapas: renda mensal bruta, custos fixos, dívidas ou parcelas, nome da meta, custo da meta e prazo em meses.
+2. Os valores são armazenados no navegador e associados a um identificador de simulação.
+3. Na tela de resultado, o app exibe os dados da meta e calcula o valor mensal disponível subtraindo custos fixos e dívidas da renda informada.
+4. O app envia os dados da simulação à API do Google Gemini para gerar um diagnóstico personalizado. A resposta inclui uma avaliação de viabilidade, diagnóstico financeiro, sugestões práticas, ideias de renda extra, sugestões de investimento e uma mensagem final.
+5. O resultado gerado pela IA também é salvo junto à simulação no armazenamento local para ser reutilizado.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tecnologias utilizadas
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **React 19**: construção da interface em componentes.
+- **TypeScript 6**: tipagem estática do código da aplicação.
+- **Vite 8**: servidor de desenvolvimento e empacotamento para produção.
+- **Tailwind CSS 4**: estilos utilitários e composição visual.
+- **React Router 7**: navegação entre páginas.
+- **Google Gemini API**: geração do diagnóstico financeiro personalizado.
+- **Lucide React**: ícones da interface.
+- **React Loading Skeleton**: indicador visual durante a geração do diagnóstico.
+- **Inter (@fontsource/inter)**: tipografia da aplicação.
+- **ESLint**: análise estática e padronização do código.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Organização do projeto
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```text
+src/
+├── components/
+│   ├── features/
+│   │   ├── Insights/          # Exibição de conteúdo e erros da análise por IA
+│   │   ├── Simulation/        # Formulário, etapas e progresso da simulação
+│   │   └── SimulationResults/ # Cartões de dados e diagnóstico
+│   ├── layout/                # Estrutura compartilhada das páginas
+│   └── shared/                # Botões, campos, cabeçalho e componentes reutilizáveis
+├── context/theme/             # Estado global do tema claro/escuro
+├── data/                      # Etapas, tipos e instruções da simulação/IA
+├── hooks/                     # Persistência local, tema e consulta de insights
+├── pages/                     # Páginas de formulário e resultado
+├── services/                  # Integração com a API Gemini
+├── styles/                    # Variáveis e estilos do tema
+└── utils/                     # Formatação monetária e cálculos
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Rotas disponíveis
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Rota | Descrição |
+| --- | --- |
+| `/` | Formulário para iniciar uma simulação |
+| `/resultado/:id` | Resultado de uma simulação identificada pelo seu ID |
+| `/historico` | Rota prevista para o histórico; atualmente exibe apenas um título, sem uma tela de histórico implementada |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Dados e integração com IA
 
+As simulações e a preferência de tema são armazenadas no `localStorage` do navegador. O projeto não contém uma API ou banco de dados próprios para persistir esses dados entre dispositivos.
+
+Para gerar o diagnóstico, os dados financeiros preenchidos são enviados do navegador à API do Google Gemini. A integração usa a variável de ambiente `VITE_GEMINI_API_KEY`. Como variáveis `VITE_*` são incorporadas ao bundle do cliente, essa abordagem não mantém a chave secreta em uma aplicação publicada; para produção, a chamada deve passar por um serviço de backend que proteja a credencial.
+
+## Como executar localmente
+
+### Requisitos
+
+- Node.js e npm.
+- Uma chave de API do Google Gemini para testar a geração do diagnóstico.
+
+### Instalação e execução
+
+```bash
+npm install
+```
+
+Crie um arquivo `.env.local` na raiz do projeto e configure sua própria chave:
+
+```dotenv
+VITE_GEMINI_API_KEY=sua_chave_aqui
+```
+
+Em seguida, inicie o servidor de desenvolvimento:
+
+```bash
+npm run dev
+```
+
+O Vite exibirá no terminal o endereço local para abrir no navegador.
+
+## Comandos disponíveis
+
+```bash
+npm run dev      # Servidor local de desenvolvimento
+npm run build    # Verificação TypeScript e build de produção
+npm run preview  # Pré-visualização local do build
+npm run lint     # Análise estática com ESLint
 ```
