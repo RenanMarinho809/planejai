@@ -13,21 +13,14 @@ import { PageHero } from '../components/shared/PageHero'
 import Button from '../components/shared/Button'
 import { useSimulationStorage } from '../hooks/useSimulationStorage'
 import { calcMonthlySavings } from '../utils/simulation'
+import { parseCurrency } from '../utils/currency'
 import type { SimulationRecord } from '../data/simulation'
 
-const formatCurrency = (value: string) =>
-  parseCurrencySafe(value).toLocaleString('pt-BR', {
+const formatCurrency = (value: number) =>
+  value.toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })
-
-const parseCurrencySafe = (value: string) => {
-  const parsed = Number.parseFloat(
-    value.replace(/\./g, '').replace(',', '.').replace('R$', ''),
-  )
-
-  return Number.isNaN(parsed) ? 0 : parsed
-}
 
 const feasibilityStyles = {
   viable: {
@@ -47,11 +40,11 @@ const feasibilityStyles = {
 export default function SimulationHistoryPage() {
   const navigate = useNavigate()
   const { getAllFormData, deleteFormData } = useSimulationStorage()
-  const [records, setRecords] = useState(getAllFormData)
+  const [records, setRecords] = useState(() => getAllFormData().reverse())
 
   const handleDelete = (id: string) => {
     deleteFormData(id)
-    setRecords(getAllFormData())
+    setRecords(getAllFormData().reverse())
   }
 
   const handleOpen = (id: string) => {
@@ -85,18 +78,14 @@ export default function SimulationHistoryPage() {
           <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-sm">
             <span className="flex items-center gap-1.5">
               <PiggyBank size={14} />
-              Meta: R$ {formatCurrency(record.goalAmount)}
+              Meta: R$ {formatCurrency(parseCurrency(record.goalAmount))}
             </span>
             <span className="flex items-center gap-1.5">
               <CalendarClock size={14} />
               {record.goalDeadline} meses
             </span>
             <span className="flex items-center gap-1.5">
-              Economia mensal: R${' '}
-              {monthlySavings.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
+              Economia mensal: R$ {formatCurrency(monthlySavings)}
             </span>
           </div>
         </div>

@@ -55,7 +55,7 @@ src/
 | --- | --- |
 | `/` | Formulário para iniciar uma simulação |
 | `/resultado/:id` | Resultado de uma simulação identificada pelo seu ID |
-| `/historico` | Rota prevista para o histórico; atualmente exibe apenas um título, sem uma tela de histórico implementada |
+| `/historico` | Histórico de consultas financeiras, com as simulações salvas no navegador |
 
 ## Dados e integração com IA
 
